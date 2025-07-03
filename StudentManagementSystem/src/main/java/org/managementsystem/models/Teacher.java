@@ -5,18 +5,22 @@ import org.managementsystem.models.Person;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Teacher extends Person {
 
+    private static final AtomicInteger counter = new AtomicInteger(1);
     private int teacherId;
     private String subject;
 
     private final ArrayList<Course> courses = new ArrayList<>();
 
-    public Teacher(String name, String email, int age, String subject, int teacherId) {
+    public Teacher(){}
+
+    public Teacher(String name, String email, int age, String subject) {
         super(name, email, age);
         this.subject    = subject;
-        this.teacherId  = teacherId;
+        this.teacherId  = counter.getAndIncrement();
     }
 
     public void addCourse(Course course) {
@@ -45,5 +49,14 @@ public class Teacher extends Person {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "teacherId=" + teacherId +
+                ", subject='" + subject + '\'' +
+                ", courses=" + courses +
+                '}';
     }
 }
