@@ -13,24 +13,14 @@ public class App {
     private List<Teacher> teachers = new ArrayList<>();
     private List<Course> courses = new ArrayList<>();
     private final AppHelper appHelper;
-    private final UserPromptHelper promptHelper;
 
-    public App(AppHelper appHelper, UserPromptHelper promptHelper) {
+    public App(AppHelper appHelper) {
         this.appHelper = appHelper;
-        this.promptHelper = promptHelper;
-    }
-
-    public static void main(String[] args) {
-        UserPromptHelper promptHelper = new UserPromptHelper();
-        AppHelper appHelper1 = new AppHelper(promptHelper);
-        App app = new App(appHelper1, promptHelper);
-        app.run();
-
     }
 
     //application start
     public void run() {
-        appHelper.displayHeader("Welcome to Student Management System.");
+        appHelper.displayHeader("This is the Student Management System.");
         
         try {
             runAppLoop();

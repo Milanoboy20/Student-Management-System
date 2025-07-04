@@ -54,7 +54,7 @@ public class AppHelper {
                     student.getAge(),
                     student.getEmail(),
                     getGradeLevel(student.getGrade()),
-                    student.getCourses());
+                    compileCourses(student.getCourses()));
         }
     }
 
@@ -73,7 +73,7 @@ public class AppHelper {
                 student.getAge(),
                 student.getEmail(),
                 getGradeLevel(student.getGrade()),
-                student.getCourses());
+                compileCourses(student.getCourses()));
     }
 
     public Student getStudent(List<Student> students, int studentId) {
@@ -96,7 +96,7 @@ public class AppHelper {
                     teacher.getAge(),
                     teacher.getEmail(),
                     teacher.getSubject(),
-                    teacher.getCourses());
+                    compileCourses(teacher.getCourses()));
         }
     }
 
@@ -266,11 +266,10 @@ public class AppHelper {
     }
     public String getName() {
         String name;
-        //make sure name is valid, contains only alphabets no numeric values
+        //make sure name is valid, contains only alphabets no numeric values, whitespace allowed
         do {
             name = promptHelper.readRequiredString("Enter a valid name: ");
         } while (!name.matches("^[a-zA-Z\\s]*$"));
-        System.out.println(name);
         return name;
     }
 
@@ -279,17 +278,15 @@ public class AppHelper {
         do {
             email = promptHelper.readRequiredString("Enter a valid email: ");
         } while (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"));
-        System.out.println(email);
         return email;
     }
 
     public int getAge() {
-        // valid age, assuming application is for college use, set age restriction to 17 - 70? maybe?
+        // valid age, assuming application is for college use, set age restriction to 17 - 90? teachers included, can be as old as 90 maybe?
         int age;
         do {
-            age = promptHelper.readInt("Enter a valid age[17 - 70]: ");
-        } while (age < 17 || age > 70);
-        System.out.println(age);
+            age = promptHelper.readInt("Enter a valid age[17 - 90]: ");
+        } while (age < 17 || age > 90);
         return age;
     }
 
@@ -299,7 +296,6 @@ public class AppHelper {
         do {
             subject = promptHelper.readRequiredString("Enter a valid subject: ");
         } while (!subject.matches("^[a-zA-Z\\s]*$"));
-        System.out.println(subject);
         return subject;
     }
 
@@ -326,5 +322,16 @@ public class AppHelper {
         return input;
     }
 
+    private String compileCourses(List<Course> courses){
+        StringBuilder builder = new StringBuilder();
+        //if empty return []
+        if (courses == null || courses.isEmpty()) return "[]";
+
+        for (Course course : courses){
+            builder.append(course.getCourseName()).append(", ");
+        }
+        String result = builder.toString();
+        return result.trim().substring(0, result.length() - 2);
+    }
 
 }

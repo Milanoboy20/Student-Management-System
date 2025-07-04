@@ -1,5 +1,7 @@
 package org.managementsystem;
 
+import com.sun.xml.internal.ws.util.StringUtils;
+
 import java.util.Scanner;
 
 public class UserPromptHelper {
@@ -15,12 +17,12 @@ public class UserPromptHelper {
     }
 
     public boolean isBlank(String prompt){
-        return prompt.isEmpty() || prompt.trim().matches("");
+        return prompt == null || prompt.trim().isEmpty() || prompt.matches("[\\n\\r\\s+]");
     }
     public String readRequiredString(String prompt) {
         while (true) {
             String result = readString(prompt);
-            if (!isBlank(prompt)) {
+            if (!isBlank(result)) {
                 return result;
             }
             println("[INVALID] Value is required.");
