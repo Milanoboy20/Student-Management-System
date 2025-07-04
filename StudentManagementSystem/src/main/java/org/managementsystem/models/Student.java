@@ -1,8 +1,5 @@
 package org.managementsystem.models;
 
-import org.managementsystem.models.Course;
-import org.managementsystem.models.Person;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,9 +41,7 @@ public class Student extends Person {
         return studentId;
     }
 
-    public void setStudentId(int studentId) {
-        this.studentId = studentId;
-    }
+    //No setStudentId, IDs are auto generated
 
     public int getGrade() {
         return grade;

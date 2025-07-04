@@ -41,7 +41,8 @@ public class AppHelper {
     public void displayStudents(List<Student> students) {
         promptHelper.println("");
         if (students == null || students.isEmpty()) {
-            promptHelper.println("No students registered/found.");
+//            promptHelper.println("No students registered/found.");
+            displayStatus(false,"No Students found.");
             return;
         }
 
@@ -61,7 +62,7 @@ public class AppHelper {
     public void displayStudent(Student student) {
         promptHelper.println("");
         if (student == null) {
-            promptHelper.println("No student found.");
+            displayStatus(false,"Student does not exist.");
             return;
         }
 
@@ -83,7 +84,7 @@ public class AppHelper {
     public void displayTeachers(List<Teacher> teachers){
         promptHelper.println("");
         if (teachers == null || teachers.isEmpty()) {
-            promptHelper.println("No Teachers found.");
+            displayStatus(false,"No Teachers found.");
             return;
         }
 
@@ -103,7 +104,7 @@ public class AppHelper {
     public void displayCourses(List<Course> courses) {
         promptHelper.println("");
         if (courses == null || courses.isEmpty()) {
-            promptHelper.println("No Courses found");
+            displayStatus(false,"No Courses found.");
             return;
         }
 

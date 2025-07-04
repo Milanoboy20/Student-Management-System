@@ -151,10 +151,10 @@ public class App {
                         appHelper.updateStudent(student, students);
                     }
                 } else
-                    appHelper.displayCourses(courses);//if courses list is empty
+                    appHelper.displayStatus(false, "Cannot assign courses to Student. At least one Course should exist.");//if courses list is empty
             }
         } else
-            appHelper.displayStudents(students);// if students list is empty
+            appHelper.displayStatus(false, "Cannot assign courses to Students. At least one Student should exist.");// if students list is empty
     }
 
     private void assignTeacherCourses() {
@@ -181,18 +181,22 @@ public class App {
                         appHelper.updateTeacher(teacher, teachers);
                     }
                 } else
-                    appHelper.displayCourses(courses);//empty courses list
+                    appHelper.displayStatus(false, "Cannot assign courses to Teacher. At least one Course should exist.");//empty courses list
             }
         } else
-            appHelper.displayTeachers(teachers);//empty teachers list
+            appHelper.displayStatus(false, "Cannot assign courses to Teachers. At least one Teacher should exist.");//empty teachers list
 
     }
 
     private void viewStudent() {
         appHelper.displayHeader(MenuOption.VIEW_STUDENT.getMessage());
 
-        int studentId = appHelper.getId("Student");
-        appHelper.displayStudent(appHelper.getStudent(students,studentId));
+        //can only view student if list is not empty
+        if (!students.isEmpty()) {
+            int studentId = appHelper.getId("Student");
+            appHelper.displayStudent(appHelper.getStudent(students,studentId));
+        }
+        else appHelper.displayStatus(false, "Cannot view Student. At least one Student should exists.");
     }
 
     private void viewStudents() {
@@ -217,91 +221,112 @@ public class App {
     private void updateStudent() {
         appHelper.displayHeader(MenuOption.UPDATE_STUDENT.getMessage());
 
-        //choose student to update from the list
-        Student student = appHelper.chooseStudent(students);
-        if (student != null && student.getStudentId() != 0){
-            appHelper.getUpdateDetails(student);
-            appHelper.updateStudent(student, students);
-            appHelper.displayStatus(true,"Update successful.");
-        } else appHelper.displayStatus(false,"Update failed. Student does not exist!");
+        //check students list if empty
+        if (!students.isEmpty()){
+            //choose student to update from the list
+            Student student = appHelper.chooseStudent(students);
+            if (student != null && student.getStudentId() != 0){
+                appHelper.getUpdateDetails(student);
+                appHelper.updateStudent(student, students);
+                appHelper.displayStatus(true,"Update successful.");
+            } else appHelper.displayStatus(false,"Update failed. Student does not exist!");
+        }
+        else appHelper.displayStatus(false,"Cannot perform update operation. At least one Student should exist.");
     }
 
     private void updateTeacher() {
         appHelper.displayHeader(MenuOption.UPDATE_TEACHER.getMessage());
 
-        //choose teacher to update from the list
-        Teacher teacher = appHelper.chooseTeacher(teachers);
-        if (teacher != null && teacher.getTeacherId() != 0){
-            appHelper.getUpdateDetails(teacher);
-            appHelper.updateTeacher(teacher, teachers);
-            appHelper.displayStatus(true,"Update successful.");
-        } else appHelper.displayStatus(false,"Update failed. Teacher does not exist!");
+        //check teachers list if empty
+        if (!teachers.isEmpty()) {
+            //choose teacher to update from the list
+            Teacher teacher = appHelper.chooseTeacher(teachers);
+            if (teacher != null && teacher.getTeacherId() != 0){
+                appHelper.getUpdateDetails(teacher);
+                appHelper.updateTeacher(teacher, teachers);
+                appHelper.displayStatus(true,"Update successful.");
+            } else appHelper.displayStatus(false,"Update failed. Teacher does not exist!");
+        }
+        else appHelper.displayStatus(false, "Cannot perform update operation. At least one Teacher should exist.");
+
     }
 
     private void deleteStudent() {
         appHelper.displayHeader(MenuOption.DELETE_STUDENT.getMessage());
 
-        //get student id
-        int studentId = appHelper.getId("Student");
+        //at least one student should exist in current list
+        if (!students.isEmpty()) {
+            //get student id
+            int studentId = appHelper.getId("Student");
 
-        //check if student exists
-        boolean studentExists = students.stream().anyMatch(s -> s.getStudentId() == studentId);
-        if (studentExists) {
-            //delete student from students list
-            List<Student> updatedStudentsList = appHelper.removeStudent(students, studentId);
-            //set student list to new list without deleted student
-            setStudents(updatedStudentsList);
-            appHelper.displayStatus(true, "Delete successful.");
-        } else
-            appHelper.displayStatus(false,"Student does not exist.");
+            //check if student exists
+            boolean studentExists = students.stream().anyMatch(s -> s.getStudentId() == studentId);
+            if (studentExists) {
+                //delete student from students list
+                List<Student> updatedStudentsList = appHelper.removeStudent(students, studentId);
+                //set student list to new list without deleted student
+                setStudents(updatedStudentsList);
+                appHelper.displayStatus(true, "Delete successful.");
+            } else
+                appHelper.displayStatus(false,"Student does not exist.");
+        }
+        else appHelper.displayStatus(false, "Cannot perform delete operation. At least one Student should exist.");
     }
 
-    public void setStudents(List<Student> students) {
+    private void setStudents(List<Student> students) {
         this.students = students;
     }
 
     private void deleteTeacher() {
         appHelper.displayHeader(MenuOption.DELETE_TEACHER.getMessage());
 
-        //get teacher id
-        int teacherId = appHelper.getId("Teacher");
+        //should have at least one teacher in current list
+        if (!teachers.isEmpty()) {
+            //get teacher id
+            int teacherId = appHelper.getId("Teacher");
 
-        //check if teacher exists
-        boolean teacherExists = teachers.stream().anyMatch(t -> t.getTeacherId() == teacherId);
-        if (teacherExists) {
-            //delete teacher from teachers list
-            List<Teacher> updatedTeachersList = appHelper.removeTeacher(teachers, teacherId);
-            //set teacher list to new list without deleted teacher
-            setTeachers(updatedTeachersList);
-            appHelper.displayStatus(true, "Delete successful.");
-        } else
-            appHelper.displayStatus(false,"Teacher does not exist.");
+            //check if teacher exists
+            boolean teacherExists = teachers.stream().anyMatch(t -> t.getTeacherId() == teacherId);
+            if (teacherExists) {
+                //delete teacher from teachers list
+                List<Teacher> updatedTeachersList = appHelper.removeTeacher(teachers, teacherId);
+                //set teacher list to new list without deleted teacher
+                setTeachers(updatedTeachersList);
+                appHelper.displayStatus(true, "Delete successful.");
+            } else
+                appHelper.displayStatus(false,"Teacher does not exist.");
+        }
+        else appHelper.displayStatus(false, "Cannot perform delete operation. At least one Teacher should exist.");
     }
 
-    public void setTeachers(List<Teacher> teachers) {
+    private void setTeachers(List<Teacher> teachers) {
         this.teachers = teachers;
     }
 
     private void deleteCourse() {
         appHelper.displayHeader(MenuOption.DELETE_COURSE.getMessage());
 
-        //get course id
-        int courseId = appHelper.getId("Course");
+        //at least one course should exist
+        if (!courses.isEmpty()) {
+            //get course id
+            int courseId = appHelper.getId("Course");
 
-        //check if course exists
-        boolean courseExists = courses.stream().anyMatch(c -> c.getCourseId() == courseId);
-        if (courseExists) {
-            //first delete course registration by students and teachers
-            Course courseToRemove = courses.stream().filter(c -> c.getCourseId() == courseId).findFirst().get();
-            appHelper.updateStudentsAndTeachers(students, teachers, courseToRemove);
+            //check if course exists
+            boolean courseExists = courses.stream().anyMatch(c -> c.getCourseId() == courseId);
+            if (courseExists) {
+                //first delete course registration by students and teachers
+                Course courseToRemove = courses.stream().filter(c -> c.getCourseId() == courseId).findFirst().get();
+                appHelper.updateStudentsAndTeachers(students, teachers, courseToRemove);
 
-            //delete course from courses list
-            List<Course> updatedCoursesList = appHelper.removeCourse(courses, courseId);
-            //set courses to updated courses list
-            setCourses(updatedCoursesList);
-            appHelper.displayStatus(true, "Delete successful.");
-        } else
-            appHelper.displayStatus(false,"Course does not exist.");
+                //delete course from courses list
+                List<Course> updatedCoursesList = appHelper.removeCourse(courses, courseId);
+                //set courses to updated courses list
+                setCourses(updatedCoursesList);
+                appHelper.displayStatus(true, "Delete successful.");
+            } else
+                appHelper.displayStatus(false,"Course does not exist.");
+        }
+        else appHelper.displayStatus(false, "Cannot perform delete operation. At least one Course should exist.");
     }
 
     private void setCourses(List<Course> updatedCoursesList) {

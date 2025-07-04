@@ -42,9 +42,7 @@ public class Teacher extends Person {
         return teacherId;
     }
 
-    public void setTeacherId(int teacherId) {
-        this.teacherId = teacherId;
-    }
+    //No setTeacherId, IDs are auto generated
 
     public String getSubject() {
         return subject;

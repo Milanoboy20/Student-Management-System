@@ -1,6 +1,6 @@
 package org.managementsystem;
 
-public class Main {
+public class StartApplication {
     public static void main(String[] args) {
         System.out.println("Hello and welcome!");
 

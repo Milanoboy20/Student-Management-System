@@ -27,9 +27,7 @@ public class Course {
         return courseId;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
+    //No setCourseId, IDs are auto generated
 
     @Override
     public String toString() {

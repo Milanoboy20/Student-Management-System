@@ -1,7 +1,5 @@
 package org.managementsystem;
 
-import com.sun.xml.internal.ws.util.StringUtils;
-
 import java.util.Scanner;
 
 public class UserPromptHelper {
@@ -44,18 +42,6 @@ public class UserPromptHelper {
             int result = readInt(prompt);
             if (result >= min && result<= max) return result;
             println(String.format("[INVALID] Enter a number between %s and %s.",min,max));
-        }
-    }
-
-    public boolean readBoolean(String prompt) {
-        while (true) {
-            String input = readRequiredString(prompt).toLowerCase();
-            if (input.equals("y")) {
-                return true;
-            } else if (input.equals("n")){
-                return false;
-            }
-            println("[INVALID] Please enter 'y' or 'n'.");
         }
     }
 
