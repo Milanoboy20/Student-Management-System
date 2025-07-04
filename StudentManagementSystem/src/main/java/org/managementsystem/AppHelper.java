@@ -5,6 +5,7 @@ import org.managementsystem.models.Student;
 import org.managementsystem.models.Teacher;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AppHelper {
 
@@ -53,7 +54,7 @@ public class AppHelper {
                     student.getAge(),
                     student.getEmail(),
                     getGradeLevel(student.getGrade()),
-                    student.getCourse());
+                    student.getCourses());
         }
     }
 
@@ -72,7 +73,7 @@ public class AppHelper {
                 student.getAge(),
                 student.getEmail(),
                 getGradeLevel(student.getGrade()),
-                student.getCourse());
+                student.getCourses());
     }
 
     public Student getStudent(List<Student> students, int studentId) {
@@ -95,7 +96,7 @@ public class AppHelper {
                     teacher.getAge(),
                     teacher.getEmail(),
                     teacher.getSubject(),
-                    teacher.getCourse());
+                    teacher.getCourses());
         }
     }
 
@@ -106,7 +107,7 @@ public class AppHelper {
             return;
         }
 
-        String format = "%-5s %-15s";
+        String format = "%-5s %-15s%n";
         promptHelper.printf(format, "ID","Course Name");
         for(Course course : courses) {
             promptHelper.printf(format,
@@ -170,6 +171,95 @@ public class AppHelper {
         return courses.stream().filter(s -> s.getCourseId() == finalInput).findFirst().orElse(null);
     }
 
+    public void getUpdateDetails(Student student) {
+        String name = getName();
+        int age = getAge();
+        String email = getEmail();
+        int grade = getGrade();
+
+        student.setName(name);
+        student.setAge(age);
+        student.setEmail(email);
+        student.setGrade(grade);
+    }
+    public void updateStudent(Student student, List<Student> students) {
+        students.stream().map(stu -> {
+            if (stu.getStudentId() == student.getStudentId()){
+                //update student
+                stu.setName(student.getName());
+                stu.setAge(student.getAge());
+                stu.setEmail(student.getEmail());
+                stu.setGrade(student.getGrade());
+                stu.setCourses(student.getCourses());
+            }
+            return null;
+        }).collect(Collectors.toList());
+    }
+
+    public List<Student> removeStudent(List<Student> students, int studentId) {
+        return students.stream().filter(s -> s.getStudentId() != studentId).collect(Collectors.toList());
+    }
+
+    public void getUpdateDetails(Teacher teacher) {
+        String name = getName();
+        int age = getAge();
+        String email = getEmail();
+        String subject = getSubject();
+
+        teacher.setName(name);
+        teacher.setAge(age);
+        teacher.setEmail(email);
+        teacher.setSubject(subject);
+    }
+
+    public void updateTeacher(Teacher teacher, List<Teacher> teachers) {
+        teachers.stream().map(t -> {
+            if (t.getTeacherId() == teacher.getTeacherId()) {
+                //update teacher
+                t.setName(teacher.getName());
+                t.setAge(teacher.getAge());
+                t.setEmail(teacher.getEmail());
+                t.setSubject(teacher.getSubject());
+                t.setCourses(teacher.getCourses());
+            }
+            return null;
+        }).collect(Collectors.toList());
+    }
+
+    public List<Teacher> removeTeacher(List<Teacher> teachers, int teacherId) {
+        return teachers.stream().filter(t -> t.getTeacherId() != teacherId).collect(Collectors.toList());
+    }
+
+    public List<Course> removeCourse(List<Course> courses, int courseId) {
+        return courses.stream().filter(c -> c.getCourseId() != courseId).collect(Collectors.toList());
+    }
+
+    public void updateStudentsAndTeachers(List<Student> students, List<Teacher> teachers, Course course) {
+        //update students who registered for this course
+        students.stream().map(s -> {
+            if (s.getCourses().contains(course)) {
+                List<Course> updatedCourseList = s.getCourses();
+                updatedCourseList.remove(course);
+
+                //set student courses list to updated list
+                s.setCourses(updatedCourseList);
+            }
+            return null;
+        }).collect(Collectors.toList());
+
+        //update teachers who teach this course
+        teachers.stream().map(t -> {
+            if (t.getCourses().contains(course)) {
+                List<Course> updatedCourseList = t.getCourses();
+                updatedCourseList.remove(course);
+
+                //set teacher courses list to updated list
+                t.setCourses(updatedCourseList);
+            }
+            return null;
+        }).collect(Collectors.toList());
+    }
+
     public void displayStatus(boolean status, String messages) {
         displayHeader(status ? "Success" : "Error");
             promptHelper.println(messages);
@@ -214,7 +304,7 @@ public class AppHelper {
     }
 
     public int getGrade() {
-        return promptHelper.readInt("Enter grade level[Freshman - 1, Sophomore - 2, ...]",1,4);
+        return promptHelper.readInt("Enter grade level[1(Freshman), 2(Sophomore), 3(Junior), 4(Senior)]: ",1,4);
     }
 
     private String getGradeLevel(int grade){
@@ -224,10 +314,10 @@ public class AppHelper {
         else return "Senior";
     }
 
-    public int getStudentId(){
+    public int getId(String type){
         int input;
         do {
-            input = promptHelper.readInt("Student ID: ");
+            input = promptHelper.readInt(String.format("%s ID: ", type));
             if (input <= 0){
                 displayStatus(false, "ID should be > 0");
             }
@@ -235,5 +325,6 @@ public class AppHelper {
 
         return input;
     }
+
 
 }

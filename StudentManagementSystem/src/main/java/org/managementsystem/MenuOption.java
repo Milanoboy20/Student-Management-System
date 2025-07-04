@@ -12,9 +12,11 @@ public enum MenuOption {
     VIEW_STUDENTS(7,"View every Student"),
     VIEW_TEACHERS(8,"View every Teacher"),
     VIEW_COURSES(9,"View every Course"),
-    VIEW_ALL(10,"View every Student, Teacher and Courses"),
-    UPDATE_STUDENT(11,"Update Student"),
-    DELETE_STUDENT(12,"Delete Student by ID");
+    UPDATE_STUDENT(10,"Update Student"),
+    UPDATE_TEACHER(11,"Update Teacher"),
+    DELETE_STUDENT(12,"Delete Student by ID"),
+    DELETE_TEACHER(13,"Delete Teacher by ID"),
+    DELETE_COURSE(14,"Delete Course bu ID");
 
     private final int value;
     private final String message;

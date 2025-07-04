@@ -12,7 +12,7 @@ public class Student extends Person {
     private static final AtomicInteger counter = new AtomicInteger(1);
     private int studentId, grade;
 
-    private final ArrayList<Course> courses = new ArrayList<>();
+    private List<Course> courses = new ArrayList<>();
 
     public Student(){
     }
@@ -32,8 +32,12 @@ public class Student extends Person {
         else courses.add(course);
     }
 
-    public List<Course> getCourse() {
+    public List<Course> getCourses() {
         return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
     }
 
     public int getStudentId() {

@@ -13,7 +13,7 @@ public class Teacher extends Person {
     private int teacherId;
     private String subject;
 
-    private final ArrayList<Course> courses = new ArrayList<>();
+    private List<Course> courses = new ArrayList<>();
 
     public Teacher(){}
 
@@ -31,10 +31,13 @@ public class Teacher extends Person {
         else courses.add(course);
     }
 
-    public List<Course> getCourse() {
+    public List<Course> getCourses() {
         return courses;
     }
 
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
     public int getTeacherId() {
         return teacherId;
     }

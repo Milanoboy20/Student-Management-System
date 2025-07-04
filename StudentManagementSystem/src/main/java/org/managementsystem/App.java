@@ -5,14 +5,13 @@ import org.managementsystem.models.Student;
 import org.managementsystem.models.Teacher;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class App {
 
-    private static final List<Student> students = new ArrayList<>();
-    private static final List<Teacher> teachers = new ArrayList<>();
-    private static final List<Course> courses = new ArrayList<>();
+    private List<Student> students = new ArrayList<>();
+    private List<Teacher> teachers = new ArrayList<>();
+    private List<Course> courses = new ArrayList<>();
     private final AppHelper appHelper;
     private final UserPromptHelper promptHelper;
 
@@ -29,7 +28,7 @@ public class App {
 
     }
 
-    //Program functions/methods
+    //application start
     public void run() {
         appHelper.displayHeader("Welcome to Student Management System.");
         
@@ -66,11 +65,15 @@ public class App {
                 break;
                 case VIEW_COURSES: viewCourses();
                 break;
-                case VIEW_ALL: viewAll();
-                break;
                 case UPDATE_STUDENT: updateStudent();
                 break;
+                case UPDATE_TEACHER: updateTeacher();
+                break;
                 case DELETE_STUDENT: deleteStudent();
+                break;
+                case DELETE_TEACHER: deleteTeacher();
+                break;
+                case DELETE_COURSE: deleteCourse();
                 break;
             }
         } while (option != MenuOption.EXIT);
@@ -93,12 +96,9 @@ public class App {
 
         //create new student instance
         Student student = new Student(name, email, age,grade);
-        System.out.println(student);
 
         //add to general students list
         students.add(student);
-
-        System.out.println("All students: \n" + students);
     }
 
 
@@ -120,12 +120,9 @@ public class App {
 
         //create new student instance
         Teacher teacher = new Teacher(name, email, age, subject);
-        System.out.println(teacher);
 
         //add to general students list
         teachers.add(teacher);
-
-        System.out.println("All teachers: \n" + teachers);
     }
 
     private void addCourse() {
@@ -138,31 +135,73 @@ public class App {
         Course course = new Course(name);
 
         courses.add(course);
-        System.out.println("All courses: \n" + courses);
     }
 
     private void assignStudentCourses() {
         appHelper.displayHeader(MenuOption.ASSIGN_STUDENT_COURSE.getMessage());
 
-        //choose from list of students to assign course
-        Student student = appHelper.chooseStudent(students);
-        Course course = appHelper.chooseCourse(courses);
-        student.addCourse(course);
+        //choose from list of students to assign course selected from available courses
+        Student student;
+        if (!students.isEmpty()) {
+            student = appHelper.chooseStudent(students);
+            if ((student == null || student.getStudentId() == 0)) {
+                appHelper.displayStatus(false, "Student does not exist");
+            }
+            else {
+                Course course;
+                if (!courses.isEmpty()) {
+                    course = appHelper.chooseCourse(courses);
+                    if (course == null || course.getCourseId() == 0) {
+                        appHelper.displayStatus(false, "Course does not exist");
+                    }
+                    else {
+                        //add course to student courses list
+                        student.addCourse(course);
+                        //finally update student in student list
+                        appHelper.updateStudent(student, students);
+                    }
+                } else
+                    appHelper.displayCourses(courses);//if courses list is empty
+            }
+        } else
+            appHelper.displayStudents(students);// if students list is empty
     }
 
     private void assignTeacherCourses() {
         appHelper.displayHeader(MenuOption.ASSIGN_TEACHER_COURSE.getMessage());
 
-        //choose teacher from list and assign course
-        Teacher teacher = appHelper.chooseTeacher(teachers);
-        Course course = appHelper.chooseCourse(courses);
-        teacher.addCourse(course);
+        //choose teacher from list and assign course selected from available courses
+        Teacher teacher;
+        if (!teachers.isEmpty()) {
+            teacher = appHelper.chooseTeacher(teachers);
+            if (teacher == null || teacher.getTeacherId() == 0) {
+                appHelper.displayStatus(false, "Teacher does not exist");
+            }
+            else {
+                Course course;
+                if (!courses.isEmpty()) {
+                    course = appHelper.chooseCourse(courses);
+                    if (course == null || course.getCourseId() == 0) {
+                        appHelper.displayStatus(false, "Course does not exist");
+                    }
+                    else {
+                        //add course to student courses list
+                        teacher.addCourse(course);
+                        //finally update student in student list
+                        appHelper.updateTeacher(teacher, teachers);
+                    }
+                } else
+                    appHelper.displayCourses(courses);//empty courses list
+            }
+        } else
+            appHelper.displayTeachers(teachers);//empty teachers list
+
     }
 
     private void viewStudent() {
         appHelper.displayHeader(MenuOption.VIEW_STUDENT.getMessage());
 
-        int studentId = appHelper.getStudentId();
+        int studentId = appHelper.getId("Student");
         appHelper.displayStudent(appHelper.getStudent(students,studentId));
     }
 
@@ -184,13 +223,98 @@ public class App {
         appHelper.displayCourses(courses);
     }
 
-    private void viewAll() {
-    }
 
     private void updateStudent() {
+        appHelper.displayHeader(MenuOption.UPDATE_STUDENT.getMessage());
+
+        //choose student to update from the list
+        Student student = appHelper.chooseStudent(students);
+        if (student != null && student.getStudentId() != 0){
+            appHelper.getUpdateDetails(student);
+            appHelper.updateStudent(student, students);
+            appHelper.displayStatus(true,"Update successful.");
+        } else appHelper.displayStatus(false,"Update failed. Student does not exist!");
+    }
+
+    private void updateTeacher() {
+        appHelper.displayHeader(MenuOption.UPDATE_TEACHER.getMessage());
+
+        //choose teacher to update from the list
+        Teacher teacher = appHelper.chooseTeacher(teachers);
+        if (teacher != null && teacher.getTeacherId() != 0){
+            appHelper.getUpdateDetails(teacher);
+            appHelper.updateTeacher(teacher, teachers);
+            appHelper.displayStatus(true,"Update successful.");
+        } else appHelper.displayStatus(false,"Update failed. Teacher does not exist!");
     }
 
     private void deleteStudent() {
+        appHelper.displayHeader(MenuOption.DELETE_STUDENT.getMessage());
+
+        //get student id
+        int studentId = appHelper.getId("Student");
+
+        //check if student exists
+        boolean studentExists = students.stream().anyMatch(s -> s.getStudentId() == studentId);
+        if (studentExists) {
+            //delete student from students list
+            List<Student> updatedStudentsList = appHelper.removeStudent(students, studentId);
+            //set student list to new list without deleted student
+            setStudents(updatedStudentsList);
+            appHelper.displayStatus(true, "Delete successful.");
+        } else
+            appHelper.displayStatus(false,"Student does not exist.");
     }
-    
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
+    private void deleteTeacher() {
+        appHelper.displayHeader(MenuOption.DELETE_TEACHER.getMessage());
+
+        //get teacher id
+        int teacherId = appHelper.getId("Teacher");
+
+        //check if teacher exists
+        boolean teacherExists = teachers.stream().anyMatch(t -> t.getTeacherId() == teacherId);
+        if (teacherExists) {
+            //delete teacher from teachers list
+            List<Teacher> updatedTeachersList = appHelper.removeTeacher(teachers, teacherId);
+            //set teacher list to new list without deleted teacher
+            setTeachers(updatedTeachersList);
+            appHelper.displayStatus(true, "Delete successful.");
+        } else
+            appHelper.displayStatus(false,"Teacher does not exist.");
+    }
+
+    public void setTeachers(List<Teacher> teachers) {
+        this.teachers = teachers;
+    }
+
+    private void deleteCourse() {
+        appHelper.displayHeader(MenuOption.DELETE_COURSE.getMessage());
+
+        //get course id
+        int courseId = appHelper.getId("Course");
+
+        //check if course exists
+        boolean courseExists = courses.stream().anyMatch(c -> c.getCourseId() == courseId);
+        if (courseExists) {
+            //first delete course registration by students and teachers
+            Course courseToRemove = courses.stream().filter(c -> c.getCourseId() == courseId).findFirst().get();
+            appHelper.updateStudentsAndTeachers(students, teachers, courseToRemove);
+
+            //delete course from courses list
+            List<Course> updatedCoursesList = appHelper.removeCourse(courses, courseId);
+            //set courses to updated courses list
+            setCourses(updatedCoursesList);
+            appHelper.displayStatus(true, "Delete successful.");
+        } else
+            appHelper.displayStatus(false,"Course does not exist.");
+    }
+
+    private void setCourses(List<Course> updatedCoursesList) {
+        this.courses = updatedCoursesList;
+    }
 }
